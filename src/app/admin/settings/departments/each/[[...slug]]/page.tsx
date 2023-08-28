@@ -1,0 +1,111 @@
+'use client';
+
+import { useAppDispatch, useAppSelector } from '@/core/redux/clientStore';
+import { RootState } from '@/core/redux/store';
+import { Button, TextField } from '@/core/ui/zenbuddha/src';
+import FormCard from '@/core/ui/zenbuddha/src/components/Forms/FormCard';
+import FormGroup from '@/core/ui/zenbuddha/src/components/Forms/FormGroup';
+import departmentApi from '@/modules/department/data/departmentApi';
+import {
+  DepartmentDetailType,
+  departmentDetailSchema,
+} from '@/modules/department/data/departmentTypes';
+import { useFormik } from 'formik';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toFormikValidate } from 'zod-formik-adapter';
+
+export default function AddNewDepartmentPage({
+  params,
+}: {
+  params: { slug?: string };
+}) {
+  const dispatch = useAppDispatch();
+  const navigate = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (params.slug) {
+      dispatch(departmentApi.endpoints.getDepartment.initiate(params.slug[0]));
+    }
+  }, [dispatch, params.slug]);
+
+  const department = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries[`getDepartment("${params.slug && params.slug[0]}")`]
+        ?.data as DepartmentDetailType | undefined
+  );
+
+  const onSubmit = async (values: DepartmentDetailType) => {
+    if (isLoading) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      var data = await Promise.resolve(
+        params.slug
+          ? dispatch(
+              departmentApi.endpoints.updateDepartment.initiate({
+                name: values.name,
+                slug: params.slug[0],
+              })
+            )
+          : dispatch(
+              departmentApi.endpoints.addDepartment.initiate({
+                name: values.name,
+              })
+            )
+      );
+      if (data) {
+        navigate.push('admin/settings/departments');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      name: department ? department.name : '',
+    },
+    validate: toFormikValidate(departmentDetailSchema),
+    onSubmit,
+  });
+
+  return (
+    <FormCard onSubmit={formik.handleSubmit} className="m-4">
+      <FormGroup title="General">
+        <div className="flex flex-col mb-2">
+          <TextField
+            id="name"
+            type="text"
+            label="Name"
+            className="flex-1"
+            {...formik.getFieldProps('name')}
+          />
+          {!!formik.errors.name && (
+            <div className="text-red-500 text-sm">{formik.errors.name}</div>
+          )}
+        </div>
+      </FormGroup>
+      <div className="flex justify-end gap-2 m-4">
+        <Button
+          text="Submit"
+          isLoading={isLoading}
+          className="h-8 w-fit"
+          type="submit"
+        />
+        <Button
+          text="Cancel"
+          className="h-8 w-fit"
+          buttonType="bordered"
+          onClick={() => {
+            navigate.back();
+          }}
+        />
+      </div>
+    </FormCard>
+  );
+}

@@ -1,0 +1,43 @@
+:root {
+  --toastify-toast-width: 250px;
+  --toastify-toast-background: #fff;
+  --toastify-toast-min-height: 40px;
+  --toastify-toast-max-height: 800px;
+  --toastify-color-progress-light: #cba22e;
+}
+
+* {
+  -webkit-tap-highlight-color: rgba(245, 248, 250, 0.2);
+}
+
+.Toastify__progress-bar {
+  height: 2px;
+}
+
+.Toastify__toast-body {
+  align-items: start;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #ffffff;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: #ffffff;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #dedee0;
+  border-radius: 6px;
+}
+
+.react-date-picker__wrapper {
+  border: none;
+  border-radius: 0.375rem;
+}

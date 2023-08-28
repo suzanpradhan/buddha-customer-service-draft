@@ -1,0 +1,15 @@
+.table_thead_tr {
+  @apply w-full font-normal text-left text-dark-500 h-10;
+}
+
+.table_th {
+  @apply first:px-0 px-3 font-semibold text-sm capitalize whitespace-nowrap;
+}
+
+.table_tbody_tr {
+  @apply h-12 text-sm text-primaryGray-500 bg-white rounded-xl;
+}
+
+.table_td {
+  @apply p-3 first:rounded-l-md last:rounded-r-md;
+}

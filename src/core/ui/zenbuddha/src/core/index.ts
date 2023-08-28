@@ -1,0 +1,1 @@
+export { emailValidate } from './validators';
